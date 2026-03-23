@@ -41,7 +41,7 @@ app:
 # ===============================================================
 schedule:
   enabled: true                         # 是否启用调度系统
-  preset: "morning_evening"             # 预设模板名称（见上方说明）
+  preset: "custom"             # 预设模板名称（见上方说明）
 
 
 # ===============================================================
@@ -55,29 +55,31 @@ schedule:
 platforms:
   enabled: true                         # 是否启用热榜平台抓取
   sources:
-    - id: "toutiao"
-      name: "今日头条"
     - id: "baidu"
       name: "百度热搜"
-    - id: "wallstreetcn-hot"
-      name: "华尔街见闻"
-    - id: "thepaper"
-      name: "澎湃新闻"
-    - id: "bilibili-hot-search"
-      name: "bilibili 热搜"
-    - id: "cls-hot"
-      name: "财联社热门"
-    - id: "ifeng"
-      name: "凤凰网"
-    - id: "tieba"
-      name: "贴吧"
     - id: "weibo"
       name: "微博"
-    - id: "douyin"
-      name: "抖音"
+    - id: "tieba"
+      name: "贴吧"
+    - id: "toutiao"
+      name: "今日头条"
+    - id: "github"
+      name: "GitHub"
+      sort: "trending"  # 优先抓取GitHub趋势开源项目
+    - id: "jin10"
+      name: "金十数据"
+    - id: "thepaper"
+      name: "澎湃新闻"
+    - id: "ifeng"
+      name: "凤凰网"
+    - id: "cls-hot"
+      name: "财联社热门"
+    - id: "ithome"
+      name: "IT之家"
     - id: "zhihu"
       name: "知乎"
-
+    - id: "douyin"
+      name: "抖音"
 
 
 # ===============================================================
@@ -113,19 +115,54 @@ rss:
   # - 正整数：覆盖全局设置，只推送此天数内的文章
   # - 0：禁用此频道的新鲜度过滤，推送所有文章
   feeds:
+    # 1. 全网权威新闻类
+    - id: "ai-bing"
+      name: "必应AI新闻"
+      url: "https://www.bing.com/news/search?q=人工智能&format=RSS"
+      max_age_days: 1
+      # 国内替代链接：https://rsshub.app/zhihu/topic/19552832/hot
+    - id: "gold-bing"
+      name: "必应黄金走势新闻"
+      url: "https://www.bing.com/news/search?q=黄金价格+走势&format=RSS"
+      max_age_days: 1
+      # 国内替代链接：https://rsshub.app/jin10/news
+    - id: "tech-program-bing"
+      name: "必应科技编程新闻"
+      url: "https://www.bing.com/news/search?q=科技+编程&format=RSS"
+      # 国内替代链接：https://rsshub.app/ithome/tech
+    - id: "global-news-bing"
+      name: "必应全球新闻"
+      url: "https://www.bing.com/news/search?q=全球新闻&format=RSS"
+      # 无法访问时直接删除该节点
+    
+    # 扩展推荐RSS（含国内替代，适配重点方向）
     - id: "hacker-news"
       name: "Hacker News"
       url: "https://hnrss.org/frontpage"
-
-    - id: "ruanyifeng"
-      name: "阮一峰的网络日志"
-      url: "http://www.ruanyifeng.com/blog/atom.xml"
-      enabled: false                  # 禁用
-      # max_age_days: 3               # 示例：推送 3 天内的文章（更新较慢的博客）
-     
-    - id: "yahoo-finance"
-      name: "雅虎财经"
-      url: "https://finance.yahoo.com/news/rssindex"
+      # max_age_days: 1               # 示例：只推送1天内的文章
+# AI类
+    - id: "ai-mit"
+      name: "麻省理工科技评论-AI专栏"
+      url: "https://www.technologyreview.com/topic/artificial-intelligence/feed/"
+      max_age_days: 2
+      # 国内替代链接：https://rsshub.app/mittechreview/topic/artificial-intelligence
+    - id: "ai-jiqizhixin"
+      name: "机器之心"
+      url: "https://www.jiqizhixin.com/rss"
+      max_age_days: 1  # 国内平台，无需代理
+    
+      # 国内替代链接：https://rsshub.app/coindesk/cn
+    - id: "crypto-cointelegraph"
+      name: "Cointelegraph中文"
+      url: "https://cn.cointelegraph.com/rss"
+      max_age_days: 1
+      # 国内替代链接：https://rsshub.app/cointelegraph/cn
+    
+    
+    - id: "github-awesome"
+      name: "Awesome系列合集"
+      url: "https://github.com/sindresorhus/awesome/commits.atom"
+      max_age_days: 7
 
     # 自定义源示例
     # - id: "custom-feed"
@@ -151,7 +188,7 @@ rss:
 # - incremental：最少打扰，只看新增
 # ===============================================================
 report:
-  mode: "current"                     # daily | current | incremental（schedule 开启时作为默认值）
+  mode: "incremental"                     # daily | current | incremental（schedule 开启时作为默认值）
 
   display_mode: "keyword"             # 分组维度: keyword | platform
                                       # keyword: 按关键词分组显示（默认）
@@ -164,7 +201,7 @@ report:
 
   rank_threshold: 5                   # 排名高亮阈值（影响展示强调，不改变抓取范围）
 
-  max_news_per_keyword: 0             # 每个关键词/标签最大显示数量（0=不限制，仅影响展示裁剪）
+  max_news_per_keyword: 3             # 每个关键词/标签最大显示数量（0=不限制，仅影响展示裁剪）
 
 
 # ===============================================================
@@ -278,9 +315,9 @@ display:
   #   - AI 分析：由 ai_analysis.include_standalone 开关控制，将完整数据送入 AI 做深度分析
   # 两者共享此处的平台/RSS 配置，但开关互相独立（可只开 AI 分析、不推送展示）
   standalone:
-    platforms: ["zhihu", "wallstreetcn-hot"]     # 热榜平台 ID 列表（如 ["zhihu", "weibo"]）
-    rss_feeds: []                     # RSS 源 ID 列表（如 ["hacker-news"]）
-    max_items: 20                     # 每个源最多展示条数（0=不限制）
+    platforms: ["wallstreetcn-hot","github","jin10","thepaper","cls-hot","douyin"] # 热榜平台 ID 列表（如 ["zhihu", "weibo"]）
+    rss_feeds: ["gold-bing"] # RSS 源 ID 列表（如 ["hacker-news"]）
+    max_items: 3                     # 每个源最多展示条数（0=不限制）
 
 
 # ===============================================================
@@ -316,7 +353,7 @@ notification:
   # 推送渠道配置
   channels:
     feishu:
-      webhook_url: ""                 # 飞书机器人 webhook URL
+      webhook_url: "${{ FEISHU_WEBHOOK_URL }}"                 # 飞书机器人 webhook URL
 
     dingtalk:
       webhook_url: ""                 # 钉钉机器人 webhook URL
@@ -368,7 +405,7 @@ storage:
   formats:
     sqlite: true                      # 主存储（必须启用）
     txt: false                        # 是否生成 TXT 快照
-    html: true                       # 是否生成 HTML 报告（⚠️ 邮件推送或者需要看网页版报告必须设为 true）
+    html: false                       # 是否生成 HTML 报告（⚠️ 邮件推送或者需要看网页版报告必须设为 true）
 
   # 本地存储配置
   local:
@@ -417,7 +454,7 @@ ai:
   
   model: "deepseek/deepseek-chat"
 
-  api_key: ""                       # API Key（建议使用环境变量 AI_API_KEY）
+  api_key: "${{DEEPSEEK_API_KEY}}"                       # API Key（建议使用环境变量 AI_API_KEY）
   
   api_base: ""                      # 自定义 API 端点（可选，大多数情况留空）
                                     # 示例: https://api.openai.com/v1（自建代理或兼容接口）
